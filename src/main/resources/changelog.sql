@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset valiit:202207131534
 CREATE TABLE customers
 (
     id   varchar(32) NOT NULL,
@@ -5,6 +8,7 @@ CREATE TABLE customers
     PRIMARY KEY (id)
 );
 
+--changeset valiit:202207131535
 CREATE TABLE invoices
 (
     id          varchar(32) NOT NULL,
@@ -14,6 +18,8 @@ CREATE TABLE invoices
     PRIMARY KEY (id),
     FOREIGN KEY (customer_id) REFERENCES customers (id)
 );
+
+--changeset valiit:202207131536
 CREATE TABLE payments
 (
     id     varchar(32) NOT NULL,
@@ -22,6 +28,7 @@ CREATE TABLE payments
     PRIMARY KEY (id)
 );
 
+--changeset valiit:202207131537
 CREATE TABLE invoice_payments
 (
     invoice_id varchar(32) NOT NULL,

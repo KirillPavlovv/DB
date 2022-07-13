@@ -1,17 +1,13 @@
-package Database_exc.DB;
+package app;
 
-import com.zaxxer.hikari.HikariConfig;
 import database.Customer;
 import database.Invoice;
 import database.Payment;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
@@ -20,50 +16,38 @@ import java.util.UUID;
 public class DbApplication {
 
 
-    public static void main(String[] args) {
-        generateDB();
+    public static void main(String[] args) throws SQLException {
 
-
-//        SpringApplication.run(DbApplication.class, args);
+        SpringApplication.run(DbApplication.class, args);
+//        generateDB();
     }
 
     public static void connectDB(Customer customer) throws SQLException {
-        String url = "jdbc:postgresql://localhost:1369/postgres";
+        String url = "jdbc:postgresql://localhost:1379/postgres";
         String username = "user";
         String password = "password";
 
-        HikariConfig con = new HikariConfig();
-        con.setJdbcUrl(url);
-        con.setUsername(username);
-        con.setPassword(password);
+        Connection conn = DriverManager.getConnection(url, username, password);
+        Statement stmt = conn.createStatement();
+//        ResultSet resultSet = stmt.executeQuery("select * from payments");
+//
+//        while (resultSet.next()) {
+//            System.out.println(resultSet.getString("date") + " " + resultSet.getString("amount"));
+//        }
 
-//        DataSource dataSource = new DataSource(con);
-//        dataSource.getConnection();
-//        dataSource.
+//        String sql = "INSERT INTO customers VALUES (" + customer.getId() + ", " + customer.getName() + ")";
+//            stmt.executeQuery(sql);
 
+    }
 
-        try(Connection conn = DriverManager.getConnection(url, username, password);
-            Statement stmt = conn.createStatement();
-
-        ) {
-            String sql = "INSERT INTO customer VALUES (" + customer.getId()+", " + customer.getName() +")";
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        }
-
-        public static void generateDB() {
-
-        Connection connection;
+    public static void generateDB() throws SQLException {
         Random random = new Random();
         for (int i = 1; i < 100; i++) {
             UUID customerId = UUID.randomUUID();
             Customer customer = new Customer(customerId, "Customer" + i);
 
-//            connectDB(customer);
+            connectDB(customer);
 
-            System.out.println(customer.toString());
             for (int j = 1; j <= 3; j++) {
                 getInvoice(random, customerId);
             }
@@ -81,7 +65,6 @@ public class DbApplication {
         BigDecimal amount = BigDecimal.valueOf(random.nextInt(10000));
         Payment payment = new Payment(paymentId, date, amount);
 
-        System.out.println(payment.toString());
     }
 
     private static void getInvoice(Random random, UUID customerId) {
@@ -89,7 +72,6 @@ public class DbApplication {
         LocalDate date = LocalDate.now().minusDays(random.nextInt(365));
         BigDecimal amount = BigDecimal.valueOf(random.nextInt(10000));
         Invoice invoice = new Invoice(invoiceId, customerId, date, amount);
-        System.out.println(invoice.toString());
     }
 
 }
