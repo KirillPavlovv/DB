@@ -5,18 +5,11 @@ import database.Invoice;
 import database.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -27,14 +20,7 @@ public class Batch implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<Map<String, Object>> result = jdbcTemplate.queryForList("SELECT * FROM customers");
         generateDB();
-//        String id = customer.getId().toString();
-//        String name = customer.getName().toString();
-//        jdbcTemplate.execute("INSERT INTO customers VALUES ( " + customer.getId() + "," + customer.getName() + ")");
-//        jdbcTemplate.execute("INSERT INTO customers VALUES ('123','name')");
-
-//        System.out.println(result);
     }
 
     public void generateDB() {
@@ -55,7 +41,7 @@ public class Batch implements CommandLineRunner {
         }
     }
 
-    private  void getPayment(Random random) {
+    private void getPayment(Random random) {
         UUID paymentId = UUID.randomUUID();
         LocalDate date = LocalDate.now().minusDays(random.nextInt(365));
         BigDecimal amount = BigDecimal.valueOf(random.nextInt(10000));
@@ -65,7 +51,7 @@ public class Batch implements CommandLineRunner {
 
     }
 
-    private  void getInvoice(Random random, UUID customerId) {
+    private void getInvoice(Random random, UUID customerId) {
         UUID invoiceId = UUID.randomUUID();
         LocalDate date = LocalDate.now().minusDays(random.nextInt(365));
         BigDecimal amount = BigDecimal.valueOf(random.nextInt(10000));
