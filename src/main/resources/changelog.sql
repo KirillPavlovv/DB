@@ -1,7 +1,4 @@
 --liquibase formatted sql
-
-
-
 --changeset valiit:202207131534
 CREATE TABLE customers
 (

@@ -1,6 +1,5 @@
 package app;
 
-import database.Customer;
 import database.Invoice;
 import database.Payment;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,22 @@ public class Batch implements CommandLineRunner {
     }
 
     public void generateDB() {
-//        jdbcTemplate.execute("TRUNCATE TABLE invoice_payments;");
+        clearTables();
+        Random random = new Random();
+        for (int i = 1; i < 100; i++) {
+            UUID customerId = UUID.randomUUID();
+            String name = generateName(random);
+            jdbcTemplate.execute("INSERT INTO customers VALUES ( '" + customerId + "','" + name + "')");
+            for (int j = 1; j <= 3; j++) {
+                getInvoice(random, customerId);
+            }
+            for (int j = 1; j < random.nextInt(1, 5); j++) {
+                getPayment(random);
+            }
+        }
+    }
+
+    private void clearTables() {
         jdbcTemplate.execute("DELETE\n" +
                 "FROM payments\n" +
                 "WHERE id IS NOT NULL");
@@ -35,27 +49,14 @@ public class Batch implements CommandLineRunner {
         jdbcTemplate.execute("DELETE\n" +
                 "FROM customers\n" +
                 "WHERE id IS NOT NULL");
-        Random random = new Random();
-        for (int i = 1; i < 100; i++) {
-            UUID customerId = UUID.randomUUID();
+    }
 
-            List<String> names = List.of("Juhan", "Andrei", "Jaanus", "Erik", "Mari", "Anna", "Maria", "Julia", "Kristina", "Mait");
-            List<String> surnames = List.of("Tamm", "Kask", "Rebane", "Karu", "Hunt", "Meri", "Trump", "Kallas", "Kaljulaid", "Petrov");
-            int nameIndex = random.nextInt(names.size());
-            int surnameIndex = random.nextInt(surnames.size());
-            String name = names.get(nameIndex) + " " + surnames.get(surnameIndex);
-
-            jdbcTemplate.execute("INSERT INTO customers VALUES ( '" + customerId + "','" + name + "')");
-
-
-            for (int j = 1; j <= 3; j++) {
-                getInvoice(random, customerId);
-            }
-            for (int j = 1; j < random.nextInt(1, 5); j++) {
-                getPayment(random);
-            }
-
-        }
+    private String generateName(Random random) {
+        List<String> names = List.of("Juhan", "Andrei", "Jaanus", "Erik", "Mari", "Anna", "Maria", "Julia", "Kristina", "Mait");
+        List<String> surnames = List.of("Tamm", "Kask", "Rebane", "Karu", "Hunt", "Meri", "Trump", "Kallas", "Kaljulaid", "Petrov");
+        int nameIndex = random.nextInt(names.size());
+        int surnameIndex = random.nextInt(surnames.size());
+        return  names.get(nameIndex) + " " + surnames.get(surnameIndex);
     }
 
     private void getPayment(Random random) {
@@ -64,8 +65,6 @@ public class Batch implements CommandLineRunner {
         BigDecimal amount = BigDecimal.valueOf(random.nextInt(10000));
         Payment payment = new Payment(paymentId, date, amount);
         jdbcTemplate.execute("INSERT INTO payments VALUES ( '" + paymentId + "','" + payment.getDate() + "','" + payment.getAmount() + "')");
-
-
     }
 
     private void getInvoice(Random random, UUID customerId) {
