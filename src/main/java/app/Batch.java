@@ -25,6 +25,16 @@ public class Batch implements CommandLineRunner {
     }
 
     public void generateDB() {
+//        jdbcTemplate.execute("TRUNCATE TABLE invoice_payments;");
+        jdbcTemplate.execute("DELETE\n" +
+                "FROM payments\n" +
+                "WHERE id IS NOT NULL");
+        jdbcTemplate.execute("DELETE\n" +
+                "FROM invoices\n" +
+                "WHERE id IS NOT NULL");
+        jdbcTemplate.execute("DELETE\n" +
+                "FROM customers\n" +
+                "WHERE id IS NOT NULL");
         Random random = new Random();
         for (int i = 1; i < 100; i++) {
             UUID customerId = UUID.randomUUID();

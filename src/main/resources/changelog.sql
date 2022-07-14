@@ -1,5 +1,7 @@
 --liquibase formatted sql
 
+
+
 --changeset valiit:202207131534
 CREATE TABLE customers
 (
@@ -37,3 +39,4 @@ CREATE TABLE invoice_payments
     FOREIGN KEY (invoice_id) REFERENCES invoices (id),
     FOREIGN KEY (payment_id) REFERENCES payments (id)
 );
+
