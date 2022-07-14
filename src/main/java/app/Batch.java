@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -27,8 +28,14 @@ public class Batch implements CommandLineRunner {
         Random random = new Random();
         for (int i = 1; i < 100; i++) {
             UUID customerId = UUID.randomUUID();
-            Customer customer = new Customer(customerId, "Customer" + i);
-            jdbcTemplate.execute("INSERT INTO customers VALUES ( '" + customerId + "','" + customer.getName() + "')");
+
+            List<String> names = List.of("Juhan", "Andrei", "Jaanus", "Erik", "Mari", "Anna", "Maria", "Julia", "Kristina", "Mait");
+            List<String> surnames = List.of("Tamm", "Kask", "Rebane", "Karu", "Hunt", "Meri", "Trump", "Kallas", "Kaljulaid", "Petrov");
+            int nameIndex = random.nextInt(names.size());
+            int surnameIndex = random.nextInt(surnames.size());
+            String name = names.get(nameIndex) + " " + surnames.get(surnameIndex);
+
+            jdbcTemplate.execute("INSERT INTO customers VALUES ( '" + customerId + "','" + name + "')");
 
 
             for (int j = 1; j <= 3; j++) {
