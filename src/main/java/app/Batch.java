@@ -5,12 +5,9 @@ import database.Invoice;
 import database.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -59,7 +56,7 @@ public class Batch implements CommandLineRunner {
         List<String> surnames = List.of("Tamm", "Kask", "Rebane", "Karu", "Hunt", "Meri", "Trump", "Kallas", "Kaljulaid", "Petrov");
         int nameIndex = random.nextInt(names.size());
         int surnameIndex = random.nextInt(surnames.size());
-        return  names.get(nameIndex) + " " + surnames.get(surnameIndex);
+        return names.get(nameIndex) + " " + surnames.get(surnameIndex);
     }
 
     private void getPayment(Random random) {
