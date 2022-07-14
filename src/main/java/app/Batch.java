@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class Batch implements CommandLineRunner {
     @Override
     public void run(String... args) {
         generateDB();
+//        new ReportGenerator(jdbcTemplate).generateReport(UUID.fromString("84b5d617-b8f5-41a6-bac9-766df1bc79ed"));
     }
 
     public void generateDB() {
@@ -33,14 +35,13 @@ public class Batch implements CommandLineRunner {
         for (int i = 1; i <= 100; i++) {
             UUID customerId = UUID.randomUUID();
             String name = generateName(random);
-
             jdbcTemplate.update("INSERT INTO customers VALUES ( :id, :name)"
                     , new BeanPropertySqlParameterSource(new Customer(customerId, name)));
             for (int j = 1; j <= 3; j++) {
                 getInvoice(random, customerId);
             }
             for (int j = 1; j < random.nextInt(1, 5); j++) {
-                getPayment(random);
+                getPayment(random, customerId);
             }
         }
     }
@@ -59,12 +60,12 @@ public class Batch implements CommandLineRunner {
         return names.get(nameIndex) + " " + surnames.get(surnameIndex);
     }
 
-    private void getPayment(Random random) {
+    private void getPayment(Random random, UUID customerId) {
         UUID paymentId = UUID.randomUUID();
         LocalDate date = LocalDate.now().minusDays(random.nextInt(365));
         BigDecimal amount = BigDecimal.valueOf(random.nextInt(10000));
-        Payment payment = new Payment(paymentId, date, amount);
-        jdbcTemplate.update("INSERT INTO payments VALUES (:id, :date, :amount )", new BeanPropertySqlParameterSource(payment));
+        Payment payment = new Payment(paymentId, customerId, date, amount);
+        jdbcTemplate.update("INSERT INTO payments VALUES (:id, :customerId, :date, :amount )", new BeanPropertySqlParameterSource(payment));
     }
 
     private void getInvoice(Random random, UUID customerId) {

@@ -13,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Payment {
    private UUID id;
+   private UUID customerId;
    private LocalDate date;
    private BigDecimal amount;
 }
