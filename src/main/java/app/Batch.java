@@ -40,15 +40,9 @@ public class Batch implements CommandLineRunner {
     }
 
     private void clearTables() {
-        jdbcTemplate.execute("DELETE\n" +
-                "FROM payments\n" +
-                "WHERE id IS NOT NULL");
-        jdbcTemplate.execute("DELETE\n" +
-                "FROM invoices\n" +
-                "WHERE id IS NOT NULL");
-        jdbcTemplate.execute("DELETE\n" +
-                "FROM customers\n" +
-                "WHERE id IS NOT NULL");
+        jdbcTemplate.execute("DELETE FROM payments WHERE id IS NOT NULL");
+        jdbcTemplate.execute("DELETE FROM invoices WHERE id IS NOT NULL");
+        jdbcTemplate.execute("DELETE FROM customers WHERE id IS NOT NULL");
     }
 
     private String generateName(Random random) {
