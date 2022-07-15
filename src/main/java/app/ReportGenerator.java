@@ -22,15 +22,12 @@ public class ReportGenerator {
 
 
         ReportGenerator reportGenerator = new ReportGenerator();
-        reportGenerator.generateReport(UUID.fromString("7bc2abc0-88fa-4e7c-8cd5-fc3829dd940b"));
+        reportGenerator.generateReport(UUID.fromString("538d0d88-3667-494b-be1f-72ed8001e5ba"));
     }
 
     private void generateReport(UUID customerId) {
 
         Report report = new Report();
-        jdbcTemplate.query("SELECT name FROM customers WHERE id= :id", Map.of("id", customerId.toString()), resultSet -> {
-            report.setCustomerName(resultSet.getString("name"));
-        });
         List<Payment> payments = getPaymentsByCustomerId(customerId);
         List<Invoice> invoices = getInvoicesByCustomerID(customerId);
         List<ReportLine> reportLines = new ArrayList<>();
@@ -45,9 +42,10 @@ public class ReportGenerator {
             Map<UUID, BigDecimal> map = new HashMap<>();
             for (Payment payment : payments) {
                 if(payment.getAmount().compareTo(BigDecimal.ZERO)>0) {
-                    totalBalance = totalBalance.add(payment.getAmount());
+
                     balance = balance.add(payment.getAmount());
                     if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                        totalBalance = totalBalance.add(payment.getAmount());
                         BigDecimal remainder = payment.getAmount().subtract(balance);
                         map.put(payment.getId(), remainder);
                         payment.setAmount(balance);
@@ -62,11 +60,8 @@ public class ReportGenerator {
             reportLine.setPayments(map);
             reportLines.add(reportLine);
         }
-
         System.out.println(reportLines);
         System.out.println(report.getBalance());
-        System.out.println(payments);
-
 
     }
 
