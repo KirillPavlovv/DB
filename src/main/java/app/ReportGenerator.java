@@ -29,9 +29,16 @@ public class ReportGenerator {
         setCustomerName(customerId, report);
         List<Payment> payments = getPaymentsByCustomerId(customerId);
         List<Invoice> invoices = getInvoicesByCustomerID(customerId);
-        List<ReportLine> reportLines = new ArrayList<>();
         report.setBalance(getTotalBalance(payments, invoices));
+        report.setReportDate(LocalDate.now());
 
+        List<ReportLine> reportLines = setReportLinesForReport(report, payments, invoices);
+        System.out.println(reportLines);
+        System.out.println(report);
+    }
+
+    private List<ReportLine> setReportLinesForReport(Report report, List<Payment> payments, List<Invoice> invoices) {
+        List<ReportLine> reportLines = new ArrayList<>();
         for (Invoice invoice : invoices) {
             BigDecimal balance = BigDecimal.ZERO;
             ReportLine reportLine = new ReportLine();
@@ -56,8 +63,7 @@ public class ReportGenerator {
             reportLines.add(reportLine);
             report.setReportLines(reportLines);
         }
-        System.out.println(reportLines);
-        System.out.println(report);
+        return reportLines;
     }
 
     private BigDecimal getTotalBalance(List<Payment> payments, List<Invoice> invoices) {
