@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +14,5 @@ import java.util.Map;
 public class ReportLine {
 
     Invoice invoice;
-    Map<Payment, BigDecimal> payments;
+    Map<UUID, BigDecimal> payments;
 }

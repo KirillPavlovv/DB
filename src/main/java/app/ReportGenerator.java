@@ -22,7 +22,7 @@ public class ReportGenerator {
 
 
         ReportGenerator reportGenerator = new ReportGenerator();
-        reportGenerator.generateReport(UUID.fromString("57821a52-0211-431e-8717-36e370350063"));
+        reportGenerator.generateReport(UUID.fromString("7bc2abc0-88fa-4e7c-8cd5-fc3829dd940b"));
     }
 
     private void generateReport(UUID customerId) {
@@ -34,36 +34,39 @@ public class ReportGenerator {
         List<Payment> payments = getPaymentsByCustomerId(customerId);
         List<Invoice> invoices = getInvoicesByCustomerID(customerId);
         List<ReportLine> reportLines = new ArrayList<>();
-        BigDecimal balance = BigDecimal.ZERO;
+        BigDecimal totalBalance = BigDecimal.ZERO;
 
         for (Invoice invoice : invoices) {
+            BigDecimal balance = BigDecimal.ZERO;
             ReportLine reportLine = new ReportLine();
-            balance = balance.subtract(invoice.getAmount());
             reportLine.setInvoice(invoice);
-            Map<Payment, BigDecimal> map = new HashMap<>();
+            balance = balance.subtract(invoice.getAmount());
+            totalBalance = totalBalance.subtract(invoice.getAmount());
+            Map<UUID, BigDecimal> map = new HashMap<>();
             for (Payment payment : payments) {
-                balance = balance.add(payment.getAmount());
-                if (balance.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal remainder = payment.getAmount().subtract(balance);
-                    map.put(payment, remainder);
-                    break;
-                } else {
-                    map.put(payment, payment.getAmount());
-                    payments.remove(payment);
-                    continue;
+                if(payment.getAmount().compareTo(BigDecimal.ZERO)>0) {
+                    totalBalance = totalBalance.add(payment.getAmount());
+                    balance = balance.add(payment.getAmount());
+                    if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                        BigDecimal remainder = payment.getAmount().subtract(balance);
+                        map.put(payment.getId(), remainder);
+                        payment.setAmount(balance);
+                        break;
+                    } else {
+                        map.put(payment.getId(), payment.getAmount());
+                        payment.setAmount(BigDecimal.ZERO);
+                    }
                 }
-
             }
+            report.setBalance(totalBalance);
             reportLine.setPayments(map);
-
             reportLines.add(reportLine);
         }
 
         System.out.println(reportLines);
-//
-//
-//        System.out.println(invoices);
-//        System.out.println(payments);
+        System.out.println(report.getBalance());
+        System.out.println(payments);
+
 
     }
 
