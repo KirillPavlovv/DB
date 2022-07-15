@@ -22,7 +22,7 @@ public class ReportGenerator {
 
 
         ReportGenerator reportGenerator = new ReportGenerator();
-        reportGenerator.generateReport(UUID.fromString("538d0d88-3667-494b-be1f-72ed8001e5ba"));
+        reportGenerator.generateReport(UUID.fromString("0b0adb2b-bffc-4bbc-a223-e27e57f01421"));
     }
 
     private void generateReport(UUID customerId) {
@@ -42,15 +42,15 @@ public class ReportGenerator {
             Map<UUID, BigDecimal> map = new HashMap<>();
             for (Payment payment : payments) {
                 if(payment.getAmount().compareTo(BigDecimal.ZERO)>0) {
-
                     balance = balance.add(payment.getAmount());
                     if (balance.compareTo(BigDecimal.ZERO) > 0) {
-                        totalBalance = totalBalance.add(payment.getAmount());
                         BigDecimal remainder = payment.getAmount().subtract(balance);
+                        totalBalance = totalBalance.add(remainder);
                         map.put(payment.getId(), remainder);
                         payment.setAmount(balance);
                         break;
                     } else {
+                        totalBalance = totalBalance.add(payment.getAmount());
                         map.put(payment.getId(), payment.getAmount());
                         payment.setAmount(BigDecimal.ZERO);
                     }
