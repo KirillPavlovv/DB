@@ -32,27 +32,30 @@ public class ReportGenerator {
             report.setCustomerName(resultSet.getString("name"));
         });
         List<Payment> payments = getPaymentsByCustomerId(customerId);
-
         List<Invoice> invoices = getInvoicesByCustomerID(customerId);
-
         List<ReportLine> reportLines = new ArrayList<>();
+        BigDecimal balance = BigDecimal.ZERO;
 
         for (Invoice invoice : invoices) {
             ReportLine reportLine = new ReportLine();
-            BigDecimal balance = BigDecimal.ZERO.subtract(invoice.getAmount());
+            balance = balance.subtract(invoice.getAmount());
             reportLine.setInvoice(invoice);
+            Map<Payment, BigDecimal> map = new HashMap<>();
             for (Payment payment : payments) {
                 balance = balance.add(payment.getAmount());
-                Map<Payment, BigDecimal> map = new HashMap<>();
                 if (balance.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal remainder = payment.getAmount().subtract(balance);
                     map.put(payment, remainder);
                     break;
                 } else {
                     map.put(payment, payment.getAmount());
+                    payments.remove(payment);
                     continue;
                 }
+
             }
+            reportLine.setPayments(map);
+
             reportLines.add(reportLine);
         }
 
