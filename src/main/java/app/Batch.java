@@ -26,7 +26,6 @@ public class Batch implements CommandLineRunner {
     @Override
     public void run(String... args) {
         generateDB();
-//        new ReportGenerator(jdbcTemplate).generateReport(UUID.fromString("84b5d617-b8f5-41a6-bac9-766df1bc79ed"));
     }
 
     public void generateDB() {

@@ -16,7 +16,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ReportGenerator {
 
-    NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(new DriverManagerDataSource("jdbc:postgresql://localhost:1379/postgres?useSSL=false", "user", "password"));
+    NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(new DriverManagerDataSource("jdbc:postgresql://localhost:5432/DB", "postgres", "student123"));
 
     public static void main(String[] args) {
 
