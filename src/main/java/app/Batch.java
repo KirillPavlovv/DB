@@ -20,7 +20,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class Batch implements CommandLineRunner {
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+    public final NamedParameterJdbcTemplate jdbcTemplate;
     private final JdbcTemplate jdbc;
 
     @Override

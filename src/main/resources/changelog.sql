@@ -28,6 +28,8 @@ CREATE TABLE payments
     PRIMARY KEY (id)
 );
 
+
+
 -- --changeset valiit:202207131537
 -- CREATE TABLE invoice_payments
 -- (
