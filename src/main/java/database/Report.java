@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -14,9 +15,8 @@ public class Report {
 
     String customerName;
     LocalDate invoiceDate;
-    LocalDate paymentDate;
     BigDecimal invoiceAmount;
-    BigDecimal paymentAmount;
+    Map<LocalDate, BigDecimal> payments;
     LocalDate reportDate;
     BigDecimal balance;
 }
