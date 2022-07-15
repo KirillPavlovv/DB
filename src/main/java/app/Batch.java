@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
 
 @Component
 @RequiredArgsConstructor
