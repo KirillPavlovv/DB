@@ -19,8 +19,6 @@ public class ReportGenerator {
     NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(new DriverManagerDataSource("jdbc:postgresql://localhost:5432/DB", "postgres", "student123"));
 
     public static void main(String[] args) {
-
-
         ReportGenerator reportGenerator = new ReportGenerator();
         reportGenerator.generateReport(UUID.fromString("0b0adb2b-bffc-4bbc-a223-e27e57f01421"));
     }
@@ -28,6 +26,7 @@ public class ReportGenerator {
     private void generateReport(UUID customerId) {
 
         Report report = new Report();
+        setCustomerName(customerId, report);
         List<Payment> payments = getPaymentsByCustomerId(customerId);
         List<Invoice> invoices = getInvoicesByCustomerID(customerId);
         List<ReportLine> reportLines = new ArrayList<>();
@@ -63,6 +62,12 @@ public class ReportGenerator {
         System.out.println(reportLines);
         System.out.println(report.getBalance());
 
+    }
+
+    private void setCustomerName(UUID customerId, Report report) {
+        jdbcTemplate.query("SELECT name FROM customers WHERE id= :id", Map.of("id", customerId.toString()), resultSet -> {
+            report.setCustomerName(resultSet.getString("name"));
+        });
     }
 
     private List<Invoice> getInvoicesByCustomerID(UUID customerId) {
