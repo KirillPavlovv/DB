@@ -5,6 +5,7 @@ import database.Payment;
 import database.Report;
 import database.ReportLine;
 import lombok.RequiredArgsConstructor;
+import netscape.javascript.JSObject;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -32,11 +33,55 @@ public class ReportGenerator {
             report.setCustomerName(resultSet.getString("name"));
         });
         List<Payment> payments = getPaymentsByCustomerId(customerId);
-
         List<Invoice> invoices = getInvoicesByCustomerID(customerId);
-
         List<ReportLine> reportLines = new ArrayList<>();
 
+        BigDecimal balance = getBalance(payments, invoices, reportLines);
+
+        report.setReportLines(reportLines);
+        report.setReportDate(LocalDate.now());
+        report.setBalance(balance);
+
+
+        List<String> messages = new ArrayList<>();
+        for (ReportLine reportLine : reportLines) {
+            String message = "";
+            StringBuilder stringBuilder = new StringBuilder();
+            LocalDate date = reportLine.getInvoice().getDate();
+            BigDecimal amount = reportLine.getInvoice().getAmount();
+            stringBuilder.append("Invoice date: ").append(date).append(" ").append("Invoice amount").append(amount).append(" ").append("\r\n");;
+            Map<Payment, BigDecimal> payments1 = reportLine.getPayments();
+            for (Payment payment : payments1.keySet()) {
+                BigDecimal paymentAmount = payments1.get(payment);
+                LocalDate paymentDate = payment.getDate();
+                stringBuilder.append(paymentDate).append(" ").append(paymentAmount).append("\r\n");
+            }
+            message = stringBuilder.toString();
+            messages.add(message);
+        }
+
+
+
+
+        System.out.println("!!!"+ messages);
+
+        System.out.println("Customer name: " + report.getCustomerName() + "\n" +
+                "Report date: " + report.getReportDate() + "\r\n" +
+
+                messages + "\r\n" +
+                "Balance: " + report.getBalance()
+
+        );
+
+//        System.out.println(report);
+//        System.out.println(reportLines);
+//        System.out.println(invoices);
+//        System.out.println(payments);
+
+    }
+
+    private BigDecimal getBalance(List<Payment> payments, List<Invoice> invoices, List<ReportLine> reportLines) {
+        BigDecimal balance = null;
         for (Invoice invoice : invoices) {
             ReportLine reportLine = new ReportLine();
             BigDecimal invoiceAmount = invoice.getAmount();
@@ -49,24 +94,20 @@ public class ReportGenerator {
                     invoice.setAmount(BigDecimal.ZERO);
                     map.put(payment, invoiceAmount);
                     reportLine.setPayments(map);
+                    balance = payment.getAmount();
                     break;
                 } else {
                     invoice.setAmount(invoiceAmount.subtract(paymentAmount));
                     payment.setAmount(BigDecimal.ZERO);
                     map.put(payment, paymentAmount);
                     reportLine.setPayments(map);
+                    balance = BigDecimal.ZERO.subtract(invoice.getAmount());
                     continue;
                 }
             }
             reportLines.add(reportLine);
         }
-
-        System.out.println(reportLines);
-
-
-        System.out.println(invoices);
-        System.out.println(payments);
-
+        return balance;
     }
 
     private List<Invoice> getInvoicesByCustomerID(UUID customerId) {
