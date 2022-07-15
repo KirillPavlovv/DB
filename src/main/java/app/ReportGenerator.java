@@ -39,22 +39,17 @@ public class ReportGenerator {
 
         for (Invoice invoice : invoices) {
             ReportLine reportLine = new ReportLine();
-            BigDecimal invoiceAmount = invoice.getAmount();
+            BigDecimal balance = BigDecimal.ZERO.subtract(invoice.getAmount());
             reportLine.setInvoice(invoice);
             for (Payment payment : payments) {
-                BigDecimal paymentAmount = payment.getAmount();
+                balance = balance.add(payment.getAmount());
                 Map<Payment, BigDecimal> map = new HashMap<>();
-                if (paymentAmount.compareTo(invoiceAmount) > 0) {
-                    payment.setAmount(paymentAmount.subtract(invoiceAmount));
-                    invoice.setAmount(BigDecimal.ZERO);
-                    map.put(payment, invoiceAmount);
-                    reportLine.setPayments(map);
+                if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal remainder = payment.getAmount().subtract(balance);
+                    map.put(payment, remainder);
                     break;
                 } else {
-                    invoice.setAmount(invoiceAmount.subtract(paymentAmount));
-                    payment.setAmount(BigDecimal.ZERO);
-                    map.put(payment, paymentAmount);
-                    reportLine.setPayments(map);
+                    map.put(payment, payment.getAmount());
                     continue;
                 }
             }
@@ -62,10 +57,10 @@ public class ReportGenerator {
         }
 
         System.out.println(reportLines);
-
-
-        System.out.println(invoices);
-        System.out.println(payments);
+//
+//
+//        System.out.println(invoices);
+//        System.out.println(payments);
 
     }
 
