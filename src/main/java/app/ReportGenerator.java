@@ -5,7 +5,6 @@ import database.Payment;
 import database.Report;
 import database.ReportLine;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -55,9 +54,10 @@ public class ReportGenerator {
             }
             reportLine.setPayments(map);
             reportLines.add(reportLine);
+            report.setReportLines(reportLines);
         }
         System.out.println(reportLines);
-        System.out.println(report.getBalance());
+        System.out.println(report);
     }
 
     private BigDecimal getTotalBalance(List<Payment> payments, List<Invoice> invoices) {
