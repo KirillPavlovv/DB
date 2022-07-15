@@ -58,12 +58,10 @@ public class ReportGenerator {
         }
         System.out.println(reportLines);
         System.out.println(report.getBalance());
-
     }
 
     private BigDecimal getTotalBalance(List<Payment> payments, List<Invoice> invoices) {
         BigDecimal totalBalance = BigDecimal.ZERO;
-
         for (Invoice invoice : invoices) {
             totalBalance = totalBalance.subtract(invoice.getAmount());
         }
