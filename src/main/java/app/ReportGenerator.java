@@ -72,19 +72,30 @@ public class ReportGenerator {
     }
 
     private void setCustomerName(UUID customerId, Report report) {
-        jdbcTemplate.query("SELECT name FROM customers WHERE id= :id", Map.of("id", customerId.toString()), resultSet -> {
+        jdbcTemplate.query("SELECT name FROM customers WHERE id= :id", Map.of("id", customerId.toString())
+                , resultSet -> {
             report.setCustomerName(resultSet.getString("name"));
         });
     }
 
     private List<Invoice> getInvoicesByCustomerID(UUID customerId) {
-        return jdbcTemplate.query("SELECT * FROM invoices WHERE customer_id = :id ORDER BY date", Map.of("id", customerId.toString()), (resultSet, rowNum) ->
-                new Invoice(UUID.fromString(resultSet.getString("id")), UUID.fromString(resultSet.getString("customer_id")), LocalDate.parse(resultSet.getString("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")), new BigDecimal(resultSet.getString("amount"))));
+        return jdbcTemplate.query("SELECT * FROM invoices WHERE customer_id = :id ORDER BY date"
+                , Map.of("id", customerId.toString()), (resultSet, rowNum) ->
+                new Invoice(UUID.fromString(resultSet.getString("id"))
+                        , UUID.fromString(resultSet.getString("customer_id"))
+                        , LocalDate.parse(resultSet.getString("date")
+                        , DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))
+                        , new BigDecimal(resultSet.getString("amount"))));
     }
 
     private List<Payment> getPaymentsByCustomerId(UUID customerId) {
-        return jdbcTemplate.query("SELECT * FROM payments WHERE customer_id = :id ORDER BY date", Map.of("id", customerId.toString()), (resultSet, rowNum) ->
-                new Payment(UUID.fromString(resultSet.getString("id")), UUID.fromString(resultSet.getString("customer_id")), LocalDate.parse(resultSet.getString("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")), new BigDecimal(resultSet.getString("amount"))));
+        return jdbcTemplate.query("SELECT * FROM payments WHERE customer_id = :id ORDER BY date"
+                , Map.of("id", customerId.toString()), (resultSet, rowNum) ->
+                new Payment(UUID.fromString(resultSet.getString("id"))
+                        , UUID.fromString(resultSet.getString("customer_id"))
+                        , LocalDate.parse(resultSet.getString("date")
+                        , DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))
+                        , new BigDecimal(resultSet.getString("amount"))));
     }
 
 
